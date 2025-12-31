@@ -1,0 +1,4 @@
+.git/
+storage/database/
+storage/endpoints/
+storage/logs/

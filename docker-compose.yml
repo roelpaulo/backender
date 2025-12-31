@@ -1,0 +1,8 @@
+services:
+  backender:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./storage:/app/storage
+    restart: unless-stopped

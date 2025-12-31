@@ -1,0 +1,8 @@
+# Storage Directory
+
+This directory contains:
+- `/database` - SQLite database file
+- `/endpoints` - PHP logic files for each endpoint
+- `/logs` - Application and error logs
+
+This directory will be created automatically on first run.
