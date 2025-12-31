@@ -2,17 +2,22 @@
 
 namespace Backender\Services;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class EmailService
 {
     private string $fromEmail;
     private string $fromName;
     private string $baseUrl;
+    private string $mailDriver;
     
     public function __construct()
     {
         $this->fromEmail = getenv('MAIL_FROM_ADDRESS') ?: 'noreply@backender.local';
         $this->fromName = getenv('MAIL_FROM_NAME') ?: 'Backender';
         $this->baseUrl = getenv('APP_URL') ?: 'http://localhost:8080';
+        $this->mailDriver = getenv('MAIL_DRIVER') ?: 'log';
     }
     
     public function sendVerificationEmail(string $to, string $token): bool
@@ -91,22 +96,40 @@ HTML;
     
     private function send(string $to, string $subject, string $htmlMessage): bool
     {
-        // Check if we should use SMTP or mail()
-        $mailDriver = getenv('MAIL_DRIVER') ?: 'log';
-        
-        if ($mailDriver === 'log') {
-            // Development mode: log emails to file instead of sending
+        // Development mode: log emails to file
+        if ($this->mailDriver === 'log') {
             return $this->logEmail($to, $subject, $htmlMessage);
         }
         
-        // Production mode: use PHP's mail() function
-        $headers = [
-            'From: ' . $this->fromName . ' <' . $this->fromEmail . '>',
-            'MIME-Version: 1.0',
-            'Content-Type: text/html; charset=UTF-8'
-        ];
-        
-        return mail($to, $subject, $htmlMessage, implode("\r\n", $headers));
+        // Production mode: use PHPMailer with SMTP
+        try {
+            $mail = new PHPMailer(true);
+            
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = getenv('SMTP_HOST') ?: 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = getenv('SMTP_USERNAME') ?: $this->fromEmail;
+            $mail->Password = getenv('SMTP_PASSWORD') ?: '';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = (int)(getenv('SMTP_PORT') ?: 587);
+            
+            // Recipients
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($to);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $htmlMessage;
+            $mail->AltBody = strip_tags($htmlMessage);
+            
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log("Email sending failed: {$mail->ErrorInfo}");
+            return false;
+        }
     }
     
     private function logEmail(string $to, string $subject, string $message): bool

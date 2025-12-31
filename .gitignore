@@ -2,3 +2,5 @@
 storage/database/
 storage/endpoints/
 storage/logs/
+vendor/
+composer.lock

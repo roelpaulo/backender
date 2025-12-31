@@ -12,6 +12,8 @@ RUN apk add --no-cache \
     php84-json \
     php84-mbstring \
     php84-openssl \
+    php84-curl \
+    composer \
     && ln -s /usr/bin/php84 /usr/bin/php
 
 # Create non-root user
@@ -26,6 +28,12 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 
 # Copy PHP-FPM configuration
 COPY docker/php-fpm.conf /etc/php84/php-fpm.d/www.conf
+
+# Copy composer files
+COPY --chown=backender:backender composer.json /app/
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Copy application files
 COPY --chown=backender:backender app /app/app

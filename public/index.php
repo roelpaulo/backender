@@ -1,6 +1,9 @@
 <?php
 
-// Autoloader
+// Composer autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Autoloader for app classes
 spl_autoload_register(function ($class) {
     $prefix = 'Backender\\';
     $baseDir = __DIR__ . '/../app/';
