@@ -29,24 +29,26 @@ class EmailService
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .button { display: inline-block; padding: 12px 24px; background: #4F46E5; color: white; 
-                  text-decoration: none; border-radius: 6px; margin: 20px 0; }
-        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; 
-                  font-size: 12px; color: #666; }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
-<body>
-    <div class="container">
-        <h2>Welcome to Backender!</h2>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #333;">Welcome to Backender!</h2>
         <p>Thanks for signing up. Please verify your email address by clicking the button below:</p>
-        <a href="{$verifyUrl}" class="button">Verify Email Address</a>
+        
+        <!-- Button using table for better email client support -->
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
+            <tr>
+                <td style="background-color: #4F46E5; border-radius: 6px; text-align: center;">
+                    <a href="{$verifyUrl}" style="display: inline-block; padding: 12px 24px; color: #ffffff !important; text-decoration: none; font-weight: bold; font-size: 16px;">Verify Email Address</a>
+                </td>
+            </tr>
+        </table>
+        
         <p>Or copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #4F46E5;">{$verifyUrl}</p>
         <p>This link will expire in 24 hours.</p>
-        <div class="footer">
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
             <p>If you didn't create an account, you can safely ignore this email.</p>
         </div>
     </div>
@@ -66,24 +68,26 @@ HTML;
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .button { display: inline-block; padding: 12px 24px; background: #DC2626; color: white; 
-                  text-decoration: none; border-radius: 6px; margin: 20px 0; }
-        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; 
-                  font-size: 12px; color: #666; }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
-<body>
-    <div class="container">
-        <h2>Password Reset Request</h2>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #333;">Password Reset Request</h2>
         <p>We received a request to reset your password. Click the button below to create a new password:</p>
-        <a href="{$resetUrl}" class="button">Reset Password</a>
+        
+        <!-- Button using table for better email client support -->
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
+            <tr>
+                <td style="background-color: #DC2626; border-radius: 6px; text-align: center;">
+                    <a href="{$resetUrl}" style="display: inline-block; padding: 12px 24px; color: #ffffff !important; text-decoration: none; font-weight: bold; font-size: 16px;">Reset Password</a>
+                </td>
+            </tr>
+        </table>
+        
         <p>Or copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #DC2626;">{$resetUrl}</p>
         <p>This link will expire in 1 hour.</p>
-        <div class="footer">
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
             <p>If you didn't request a password reset, you can safely ignore this email. Your password won't be changed.</p>
         </div>
     </div>
