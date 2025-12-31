@@ -10,7 +10,16 @@
 
 ```bash
 docker build -t backender .
-docker run -d -p 8080:80 -v $(pwd)/storage:/app/storage --name backender backender
+docker run -d -p 8080:80 \
+  -v $(pwd)/storage:/app/storage \
+  -e MAIL_DRIVER=smtp \
+  -e MAIL_FROM_ADDRESS=admin@yourdomain.com \
+  -e SMTP_HOST=smtp.gmail.com \
+  -e SMTP_PORT=587 \
+  -e SMTP_USERNAME=your-email@gmail.com \
+  -e SMTP_PASSWORD=your-app-password \
+  -e APP_URL=http://localhost:8080 \
+  --name backender backender
 ```
 
 Access the UI at **http://localhost:8080** and create your admin account.
@@ -97,6 +106,16 @@ services:
       - "8080:80"
     volumes:
       - ./storage:/app/storage
+    environment:
+      # Email configuration (for verification & password reset)
+      - MAIL_DRIVER=smtp
+      - MAIL_FROM_ADDRESS=admin@yourdomain.com
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=your-email@gmail.com
+      - SMTP_PASSWORD=your-app-password
+      # App URL (used in email links)
+      - APP_URL=http://localhost:8080
     restart: unless-stopped
 ```
 
@@ -106,11 +125,42 @@ services:
 docker build -t backender .
 docker run -d -p 80:80 \
   -v /path/to/storage:/app/storage \
+  -e MAIL_DRIVER=smtp \
+  -e MAIL_FROM_ADDRESS=admin@yourdomain.com \
+  -e SMTP_HOST=smtp.gmail.com \
+  -e SMTP_PORT=587 \
+  -e SMTP_USERNAME=your-email@gmail.com \
+  -e SMTP_PASSWORD=your-app-password \
+  -e APP_URL=https://your-domain.com \
   --name backender \
   backender
 ```
 
 Works with: Dokploy, Coolify, Portainer, or any Docker host.
+
+### Email Configuration
+
+Backender uses **PHPMailer** for sending verification and password reset emails via SMTP.
+
+**Required Environment Variables:**
+- `MAIL_DRIVER=smtp` - Email driver (use "smtp")
+- `MAIL_FROM_ADDRESS` - From email address
+- `SMTP_HOST` - SMTP server hostname
+- `SMTP_PORT` - SMTP port (587 for TLS, 465 for SSL)
+- `SMTP_USERNAME` - SMTP authentication username
+- `SMTP_PASSWORD` - SMTP authentication password
+- `APP_URL` - Your application URL (for email links)
+
+**Gmail Example:**
+1. Enable 2-factor authentication on your Google account
+2. Generate an App Password: https://myaccount.google.com/apppasswords
+3. Use the app password in `SMTP_PASSWORD`
+
+**Other SMTP Providers:**
+- **SendGrid**: `smtp.sendgrid.net:587`
+- **Mailgun**: `smtp.mailgun.org:587`
+- **Amazon SES**: `email-smtp.us-east-1.amazonaws.com:587`
+- **Custom SMTP**: Use your own mail server credentials
 
 ## Request Object API
 
@@ -552,9 +602,11 @@ storage/
 - **Database**: SQLite 3
 - **Web Server**: nginx
 - **Runtime**: php-fpm
-- **Container**: Alpine Linux
+- **Container**: Alpine Linux 3.21
 - **Frontend**: TailwindCSS + DaisyUI + Alpine.js
 - **Editor**: Monaco Editor (VS Code)
+- **Email**: PHPMailer 6.9 (SMTP support)
+- **Dependencies**: Composer
 
 ## Philosophy
 

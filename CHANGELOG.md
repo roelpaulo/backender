@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Integrated PHPMailer for SMTP email support
+- Added Composer for dependency management
+- Email service now uses SMTP instead of PHP mail() function
+- Docker build optimized for PHP 8.4 with Composer support
+
 ### Planned
 - Real-world testing and bug fixes
 - Performance optimization

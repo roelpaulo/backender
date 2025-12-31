@@ -44,19 +44,36 @@ backender/
 
 ## Getting Started
 
-### 1. Build and Run
+### 1. Configure Email (Optional but Recommended)
+
+For email verification and password reset to work, configure SMTP in `docker-compose.yml`:
+
+```yaml
+environment:
+  - MAIL_DRIVER=smtp
+  - MAIL_FROM_ADDRESS=admin@yourdomain.com
+  - SMTP_HOST=smtp.gmail.com
+  - SMTP_PORT=587
+  - SMTP_USERNAME=your-email@gmail.com
+  - SMTP_PASSWORD=your-app-password
+  - APP_URL=http://localhost:8080
+```
+
+For Gmail, generate an App Password: https://myaccount.google.com/apppasswords
+
+### 2. Build and Run
 
 ```bash
 docker-compose up --build -d
 ```
 
-### 2. Access the UI
+### 3. Access the UI
 
 Open http://localhost:8080 in your browser.
 
-### 3. First Run Setup
+### 4. First Run Setup
 
-You'll be prompted to create an admin account. Choose a username and password.
+You'll be prompted to create an admin account. You'll need to verify your email before logging in.
 
 ### 4. Create Your First Endpoint
 

@@ -16,10 +16,25 @@ Add these secrets:
    - Get this from Dokploy API settings
    - If Dokploy doesn't require auth, you can skip this
 
+### Environment Variables in Dokploy
+
+Configure these in your Dokploy project settings:
+
+**Required:**
+- `APP_URL` - Your app URL (e.g., `https://backender-demo.roelsoft.dev`)
+- `MAIL_DRIVER=smtp`
+- `MAIL_FROM_ADDRESS` - From email (e.g., `admin@roelsoft.dev`)
+
+**SMTP Configuration:**
+- `SMTP_HOST` - SMTP server (e.g., `smtp.gmail.com`)
+- `SMTP_PORT` - Port (587 for TLS, 465 for SSL)
+- `SMTP_USERNAME` - Your email
+- `SMTP_PASSWORD` - SMTP password or app password
+
 ### How It Works
 
 1. **Push to `demo` branch** → Triggers deployment
-2. GitHub Actions builds Docker image
+2. GitHub Actions builds Docker image (with PHPMailer)
 3. Pushes to GitHub Container Registry (ghcr.io)
 4. Triggers Dokploy webhook
 5. Dokploy pulls and deploys the new image
