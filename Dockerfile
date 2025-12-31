@@ -9,12 +9,11 @@ RUN apk add --no-cache \
     php84-pdo_sqlite \
     php84-sqlite3 \
     php84-session \
-    php84-json \
     php84-mbstring \
     php84-openssl \
     php84-curl \
-    composer \
-    && ln -s /usr/bin/php84 /usr/bin/php
+    php84-phar \
+    composer
 
 # Create non-root user
 RUN adduser -D -u 1000 backender
@@ -29,18 +28,20 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 # Copy PHP-FPM configuration
 COPY docker/php-fpm.conf /etc/php84/php-fpm.d/www.conf
 
+# Set working directory
+WORKDIR /app
+
 # Copy composer files
 COPY --chown=backender:backender composer.json /app/
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install dependencies with PHP 8.4 (composer wrapper uses php83, so call .phar directly)
+# Ignore ctype requirement as it's not available in Alpine PHP 8.4 packages
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN php84 /usr/bin/composer.phar install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-ctype
 
 # Copy application files
 COPY --chown=backender:backender app /app/app
 COPY --chown=backender:backender public /app/public
-
-# Set working directory
-WORKDIR /app
 
 # Expose port
 EXPOSE 80
