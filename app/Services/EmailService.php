@@ -105,6 +105,12 @@ HTML;
         try {
             $mail = new PHPMailer(true);
             
+            // Enable debug output (will be logged to PHP error log)
+            $mail->SMTPDebug = 2;
+            $mail->Debugoutput = function($str, $level) {
+                error_log("PHPMailer Debug [$level]: $str");
+            };
+            
             // Server settings
             $mail->isSMTP();
             $mail->Host = getenv('SMTP_HOST') ?: 'smtp.gmail.com';
@@ -113,6 +119,9 @@ HTML;
             $mail->Password = getenv('SMTP_PASSWORD') ?: '';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = (int)(getenv('SMTP_PORT') ?: 587);
+            
+            // Log configuration for debugging
+            error_log("Email Configuration - Driver: {$this->mailDriver}, Host: {$mail->Host}, Port: {$mail->Port}, User: {$mail->Username}, From: {$this->fromEmail}");
             
             // Recipients
             $mail->setFrom($this->fromEmail, $this->fromName);
@@ -125,9 +134,14 @@ HTML;
             $mail->AltBody = strip_tags($htmlMessage);
             
             $mail->send();
+            error_log("Email sent successfully to: $to");
             return true;
         } catch (Exception $e) {
-            error_log("Email sending failed: {$mail->ErrorInfo}");
+            error_log("Email sending failed to $to: {$mail->ErrorInfo}");
+            error_log("Exception: " . $e->getMessage());
+            error_log("Trace: " . $e->getTraceAsString());
+            // Also log to emails.log for easier debugging
+            $this->logEmail($to, $subject, "FAILED TO SEND: {$mail->ErrorInfo}\n\n" . $htmlMessage);
             return false;
         }
     }
