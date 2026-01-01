@@ -2,7 +2,7 @@
 
 ⚡ A self-hosted backend runtime for creating custom API endpoints using PHP logic.
 
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/roelpaulo/backender/releases)
+[![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)](https://github.com/roelpaulo/backender/releases)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -691,6 +691,12 @@ MIT License - Use freely, modify as needed.
 - 📖 [Documentation](docs/)
 - 💬 [Issues](https://github.com/yourusername/backender/issues)
 - ⭐ Star the repo if you find it useful!
+
+---
+
+## Demo
+
+- 🌐 [https://backender-demo.roelsoft.dev/](https://backender-demo.roelsoft.dev/)
 
 ---
 
