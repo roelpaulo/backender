@@ -11,13 +11,20 @@ class App
     private PDO $db;
     private Router $router;
     private string $storagePath;
+    private bool $isDemoMode;
     
     public function __construct(string $storagePath = '/app/storage')
     {
         $this->storagePath = $storagePath;
+        $this->isDemoMode = (getenv('DEMO_MODE') === 'true');
         $this->initializeStorage();
         $this->initializeDatabase();
         $this->router = new Router();
+        
+        // Create demo user if in demo mode and no users exist
+        if ($this->isDemoMode && $this->isFirstRun()) {
+            $this->createDemoUser();
+        }
     }
     
     private function initializeStorage(): void
@@ -113,6 +120,11 @@ class App
         return $this->storagePath;
     }
     
+    public function isDemoMode(): bool
+    {
+        return $this->isDemoMode;
+    }
+    
     public function isFirstRun(): bool
     {
         $stmt = $this->db->query('SELECT COUNT(*) FROM users');
@@ -129,5 +141,44 @@ class App
         } catch (\Exception $e) {
             error_log("Failed to write log: " . $e->getMessage());
         }
+    }
+    
+    private function createDemoUser(): void
+    {
+        $stmt = $this->db->prepare('
+                INSERT INTO users (email, password, email_verified_at, created_at)
+            VALUES (?, ?, datetime("now"), datetime("now"))
+        ');
+        
+        // Demo credentials: demo@backender.dev / DemoPass123!
+        $hashedPassword = password_hash('DemoPass123!', PASSWORD_BCRYPT);
+        $stmt->execute(['demo@backender.dev', $hashedPassword]);
+    }
+    
+    public function clearAllData(): void
+    {
+        if (!$this->isDemoMode) {
+            return; // Only allow in demo mode
+        }
+        
+        // Delete all data
+        $this->db->exec('DELETE FROM endpoints');
+        $this->db->exec('DELETE FROM logs');
+        $this->db->exec('DELETE FROM api_keys');
+        
+        // Delete endpoint files
+        $endpointsDir = $this->storagePath . '/endpoints';
+        if (is_dir($endpointsDir)) {
+            $files = glob($endpointsDir . '/*.php');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+        }
+        
+        // Recreate demo user
+        $this->db->exec('DELETE FROM users');
+        $this->createDemoUser();
     }
 }

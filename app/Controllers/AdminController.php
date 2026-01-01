@@ -123,13 +123,15 @@ class AdminController
             return $this->view('login', [
                 'title' => 'Login',
                 'error' => $result['error'] ?? 'Invalid credentials',
-                'showNav' => false
+                'showNav' => false,
+                'isDemoMode' => $this->app->isDemoMode()
             ]);
         }
         
         return $this->view('login', [
             'title' => 'Login',
-            'showNav' => false
+            'showNav' => false,
+            'isDemoMode' => $this->app->isDemoMode()
         ]);
     }
     
@@ -263,6 +265,11 @@ class AdminController
     
     public function logout(): Response
     {
+        // Clear all data in demo mode
+        if ($this->app->isDemoMode()) {
+            $this->app->clearAllData();
+        }
+        
         $this->auth->logout();
         return Response::redirect('/login');
     }
