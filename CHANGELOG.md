@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance optimization
 - Additional security hardening
 
+## [0.1.1] - 2026-01-01
+
+### Changed
+- Integrated PHPMailer for SMTP email sending; added Composer dependency and updated Dockerfile.
+- Fixed PHP-FPM environment passing (`clear_env = no`) so SMTP environment variables are available to PHP-FPM.
+- Improved email templates for Gmail compatibility and added detailed PHPMailer debug logging for troubleshooting.
+- Added `DEMO_MODE` to support a fixed demo user and automatic data reset on logout (demo-only behavior).
+- Updated documentation (`README.md`, `docs/QUICKSTART.md`, `.github/DEPLOY.md`) with SMTP configuration and demo-mode notes.
+- Misc: Docker build fixes, dependency updates, and minor UI/email improvements.
+
 ## [0.1.0] - 2026-01-01
 
 ### Status
