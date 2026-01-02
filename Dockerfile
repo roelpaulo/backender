@@ -8,12 +8,26 @@ RUN apk add --no-cache \
     php84-pdo \
     php84-pdo_sqlite \
     php84-sqlite3 \
+    php84-pdo_mysql \
+    php84-mysqli \
+    php84-pdo_pgsql \
+    php84-pgsql \
     php84-session \
     php84-mbstring \
     php84-openssl \
     php84-curl \
     php84-phar \
-    composer
+    php84-bcmath \
+    php84-xml \
+    php84-dom \
+    php84-zip \
+    php84-iconv \
+    php84-tokenizer \
+    php84-fileinfo \
+    composer \
+    git \
+    curl \
+    tar
 
 # Create non-root user
 RUN adduser -D -u 1000 backender
@@ -34,10 +48,13 @@ WORKDIR /app
 # Copy composer files
 COPY --chown=backender:backender composer.json /app/
 
-# Install dependencies with PHP 8.4 (composer wrapper uses php83, so call .phar directly)
-# Ignore ctype requirement as it's not available in Alpine PHP 8.4 packages
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN php84 /usr/bin/composer.phar install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-ctype
+# Manually install PHPMailer to bypass Composer's connectivity issues in certain environments
+# This ensures it can be built anywhere even if Packagist is unreachable
+RUN mkdir -p /app/vendor/phpmailer/phpmailer && \
+    curl -L https://github.com/PHPMailer/PHPMailer/archive/refs/tags/v6.9.1.tar.gz | tar xz -C /app/vendor/phpmailer/phpmailer --strip-components=1 && \
+    mkdir -p /app/vendor/composer && \
+    echo '<?php require_once __DIR__ . "/phpmailer/phpmailer/src/PHPMailer.php"; require_once __DIR__ . "/phpmailer/phpmailer/src/SMTP.php"; require_once __DIR__ . "/phpmailer/phpmailer/src/Exception.php";' > /app/vendor/autoload.php && \
+    chown -R backender:backender /app/vendor
 
 # Copy application files
 COPY --chown=backender:backender app /app/app
