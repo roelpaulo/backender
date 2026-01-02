@@ -6,7 +6,7 @@ use PDO;
 
 class App
 {
-    public const VERSION = '0.1.1';
+    public const VERSION = '0.1.2';
     
     private PDO $db;
     private Router $router;

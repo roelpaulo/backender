@@ -7,16 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Integrated PHPMailer for SMTP email support
-- Added Composer for dependency management
-- Email service now uses SMTP instead of PHP mail() function
-- Docker build optimized for PHP 8.4 with Composer support
-
 ### Planned
 - Real-world testing and bug fixes
 - Performance optimization
 - Additional security hardening
+
+## [0.1.2] - 2026-01-03
+
+### Added
+- Added `php84-pdo_mysql`, `php84-pdo_pgsql`, `php84-mysqli`, and `php84-pgsql` extensions to support external databases from custom endpoints.
+- Added utility extensions: `bcmath`, `xml`, `dom`, `zip`, `iconv`, `tokenizer`, `fileinfo`.
+- Added `git`, `curl`, and `tar` to the Docker image to support alternative dependency retrieval.
+
+### Fixed
+- Improved Docker build reliability by implementing a manual PHPMailer download workaround for environments where Packagist connectivity is restricted.
 
 ## [0.1.1] - 2026-01-01
 
@@ -64,5 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prepared SQL statements (no SQL injection)
 - No eval() or dynamic includes
 
-[Unreleased]: https://github.com/roelpaulo/backender/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/roelpaulo/backender/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/roelpaulo/backender/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/roelpaulo/backender/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/roelpaulo/backender/releases/tag/v0.1.0

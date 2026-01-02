@@ -2,7 +2,7 @@
 
 ⚡ A self-hosted backend runtime for creating custom API endpoints using PHP logic.
 
-[![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)](https://github.com/roelpaulo/backender/releases)
+[![Version](https://img.shields.io/badge/version-0.1.2-orange.svg)](https://github.com/roelpaulo/backender/releases)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
