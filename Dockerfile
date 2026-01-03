@@ -60,22 +60,39 @@ RUN mkdir -p /app/vendor/phpmailer/phpmailer && \
 COPY --chown=backender:backender app /app/app
 COPY --chown=backender:backender public /app/public
 
+# Copy storage structure with .gitkeep files to ensure directories exist in image
+COPY --chown=backender:backender storage /app/storage-init
+
 # Declare storage as a volume so runtimes can mount persistent storage to /app/storage
 VOLUME ["/app/storage"]
 
 # Expose port
 EXPOSE 80
 
-# Create startup script
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo '# Ensure storage directories exist' >> /start.sh && \
-    echo 'mkdir -p /app/storage/logs /app/storage/database /app/storage/endpoints' >> /start.sh && \
-    echo 'chown -R backender:backender /app/storage' >> /start.sh && \
-    echo 'touch /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log' >> /start.sh && \
-    echo 'php-fpm84 -D' >> /start.sh && \
-    echo 'tail -F /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log &' >> /start.sh && \
-    echo 'nginx -g "daemon off;"' >> /start.sh && \
-    chmod +x /start.sh
+# Create startup script with storage initialization
+COPY --chmod=755 <<'EOF' /start.sh
+#!/bin/sh
+set -e
+
+# Initialize storage from template if empty (first run or fresh volume)
+if [ ! -f /app/storage/database/.gitkeep ]; then
+    echo "Initializing storage structure..."
+    mkdir -p /app/storage/logs /app/storage/database /app/storage/endpoints
+    cp -n /app/storage-init/database/.gitkeep /app/storage/database/ 2>/dev/null || true
+    cp -n /app/storage-init/endpoints/.gitkeep /app/storage/endpoints/ 2>/dev/null || true
+    cp -n /app/storage-init/logs/.gitkeep /app/storage/logs/ 2>/dev/null || true
+    cp -n /app/storage-init/README.md /app/storage/ 2>/dev/null || true
+fi
+
+# Ensure proper ownership
+chown -R backender:backender /app/storage
+touch /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log
+
+# Start services
+php-fpm84 -D
+tail -F /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log &
+exec nginx -g "daemon off;"
+EOF
 
 # Run as non-root user for php-fpm, but nginx needs root for port 80
 CMD ["/start.sh"]

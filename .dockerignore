@@ -1,6 +1,16 @@
-storage/
+# Exclude git files
 .git/
 .gitignore
 README.md
 docker-compose.yml
 *.md
+
+# Exclude storage data but keep structure
+storage/database/*.sqlite
+storage/database/*.db
+storage/logs/*.log
+storage/endpoints/*.php
+!storage/endpoints/.gitkeep
+!storage/database/.gitkeep
+!storage/logs/.gitkeep
+storage/README.md
