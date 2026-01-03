@@ -3,7 +3,7 @@ name: Deploy to Dokploy (Demo)
 on:
   push:
     branches:
-      - demo
+      - main
 
 env:
   IMAGE_NAME: backender
@@ -35,23 +35,32 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:demo
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:demo-${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
-      - name: Trigger Dokploy Deployment
+          
+      - name: Deploy to Dokploy Demo (Service 1)
         run: |
-          curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL }}" \
+          curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL_1 }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.DOKPLOY_TOKEN }}" \
             -d '{
-              "image": "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:demo",
-              "tag": "demo-${{ github.sha }}"
+              "image": "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}",
+              "tag": "sha-${{ github.sha }}"
+            }'
+      - name: Deploy to Dokploy Prod (Service 2)
+        run: |
+          curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL_2 }}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.DOKPLOY_TOKEN }}" \
+            -d '{
+              "image": "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}",
+              "tag": "sha-${{ github.sha }}"
             }'
       
       - name: Deployment Status
         run: |
           echo "✅ Deployed to Dokploy"
-          echo "Image: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:demo"
+          echo "Image: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
           echo "Commit: ${{ github.sha }}"
