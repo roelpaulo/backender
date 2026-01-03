@@ -68,7 +68,9 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo '# Ensure storage directories exist' >> /start.sh && \
     echo 'mkdir -p /app/storage/logs /app/storage/database /app/storage/endpoints' >> /start.sh && \
     echo 'chown -R backender:backender /app/storage' >> /start.sh && \
+    echo 'touch /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log' >> /start.sh && \
     echo 'php-fpm84 -D' >> /start.sh && \
+    echo 'tail -F /app/storage/logs/php-fpm.log /app/storage/logs/php-error.log /var/log/nginx/error.log /var/log/nginx/access.log &' >> /start.sh && \
     echo 'nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
