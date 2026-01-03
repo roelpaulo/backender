@@ -4,5 +4,13 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./storage:/app/storage
+      - ./storage:/app/storage:rw
+    environment:
+      - STORAGE_PATH=/app/storage
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

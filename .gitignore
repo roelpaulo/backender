@@ -1,6 +1,9 @@
 .git/
-storage/database/
-storage/endpoints/
-storage/logs/
+storage/database/*
+!storage/database/.gitkeep
+storage/endpoints/*
+!storage/endpoints/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
 vendor/
 composer.lock
