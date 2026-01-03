@@ -60,6 +60,9 @@ RUN mkdir -p /app/vendor/phpmailer/phpmailer && \
 COPY --chown=backender:backender app /app/app
 COPY --chown=backender:backender public /app/public
 
+# Declare storage as a volume so runtimes can mount persistent storage to /app/storage
+VOLUME ["/app/storage"]
+
 # Expose port
 EXPOSE 80
 
