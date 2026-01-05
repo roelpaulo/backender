@@ -130,7 +130,7 @@ HTTP Client
     │       │               │       │       │
     │       │               │       │       └─→ require 'return function...'
     │       │               │       │
-    │       │               │       ├─→ Call handler($request, $db)
+    │       │               │       ├─→ Call handler($request)
     │       │               │       │       │
     │       │               │       │       └─→ Execute user logic
     │       │               │       │
@@ -195,7 +195,11 @@ storage/endpoints/{id}.php
 
 ┌─────────────────────────────────────────────┐
 │ <?php                                        │
-│ return function ($request, $db) {            │
+│ return function ($request) {                 │
+│     // Create DB connection inside handler:
+│     $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+│     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+│
 │     // User-defined logic                   │
 │     $name = $request->query('name');        │
 │                                              │
@@ -213,8 +217,9 @@ storage/endpoints/{id}.php
          ▼
     Callable Handler
          │
-         │ Executed with ($request, $db)
+         │ Executed with ($request)
          │
+         │ Note: The runtime does not pass a `$db` parameter. If your logic needs database access, create a PDO connection inside the handler (e.g. `new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite')`).
          ▼
     Return Value
          │

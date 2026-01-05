@@ -22,9 +22,7 @@ GET requests typically retrieve data and use query parameters.
 
 ```php
 <?php
-return function ($request, $db) {
-    // Note: $db is always passed but you don't have to use it!
-    
+return function ($request) {
     // Get single query parameter with default
     $id = $request->query('id', 1);
     
@@ -42,7 +40,7 @@ return function ($request, $db) {
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
     // Process data without touching the database
     $a = (float) $request->query('a', 0);
     $b = (float) $request->query('b', 0);
@@ -85,7 +83,10 @@ curl "http://localhost:8080/api/search?q=hello&page=2&limit=10"
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     
     if (!$id) {
@@ -114,7 +115,7 @@ POST requests typically create new resources and accept data in the request body
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
     // Get individual fields
     $name = $request->input('name');
     $email = $request->input('email');
@@ -156,7 +157,10 @@ curl -X POST http://localhost:8080/api/users \
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // Validate input
     $name = $request->input('name');
     $email = $request->input('email');
@@ -183,7 +187,7 @@ return function ($request, $db) {
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
     // Access nested JSON data
     $user = $request->input('user');
     $address = $request->input('user.address');
@@ -224,7 +228,10 @@ PUT requests typically update existing resources completely.
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $name = $request->input('name');
     $email = $request->input('email');
@@ -269,7 +276,10 @@ DELETE requests remove resources.
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     
     if (!$id) {
@@ -300,7 +310,10 @@ curl -X DELETE "http://localhost:8080/api/user?id=123"
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     
     // Soft delete - mark as deleted instead of removing
@@ -321,7 +334,10 @@ PATCH requests partially update resources (only specified fields).
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $updates = [];
     $params = [];
@@ -350,6 +366,7 @@ return function ($request, $db) {
     return Response::json(['message' => 'User partially updated']);
 };
 ```
+]}]**Unexpected result**: The tool didn't return a success summary but likely applied the changes. Attempt to run grep again to see remaining occurrences. I'm going to check file for remaining $db mentions. If more remain, run additional replacements. Let's run grep_search for $db in docs again.}}
 
 ### Example Usage
 
@@ -403,7 +420,7 @@ $request->header('X-Custom', 'default') // Get header with default
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
     $method = $request->method();        // 'POST'
     $path = $request->path();            // '/api/users'
     $id = $request->query('id', 0);      // From ?id=123
@@ -486,7 +503,10 @@ return Response::redirect('/login', 302);
 **GET /api/users** - List all users
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $stmt = $db->query('SELECT * FROM users');
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 };
@@ -495,7 +515,10 @@ return function ($request, $db) {
 **GET /api/users** - Get specific user
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $stmt = $db->prepare('SELECT * FROM users WHERE id = ?');
     $stmt->execute([$id]);
@@ -506,7 +529,10 @@ return function ($request, $db) {
 **POST /api/users** - Create user
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $name = $request->input('name');
     $email = $request->input('email');
     
@@ -520,7 +546,10 @@ return function ($request, $db) {
 **PUT /api/users** - Update user
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $stmt = $db->prepare('UPDATE users SET name = ?, email = ? WHERE id = ?');
     $stmt->execute([$request->input('name'), $request->input('email'), $id]);
@@ -532,7 +561,10 @@ return function ($request, $db) {
 **DELETE /api/users** - Delete user
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $stmt = $db->prepare('DELETE FROM users WHERE id = ?');
     $stmt->execute([$id]);
@@ -540,7 +572,7 @@ return function ($request, $db) {
     return Response::json(['message' => 'Deleted']);
 };
 ```
-
+]}]
 ---
 
 ## Tips & Best Practices

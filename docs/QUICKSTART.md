@@ -87,7 +87,10 @@ You'll be prompted to create an admin account. You'll need to verify your email 
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $name = $request->query('name', 'World');
     
     return [
@@ -105,7 +108,11 @@ Every endpoint is a PHP file that returns a function:
 
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    // Create DB connection inside the handler:
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // Your logic here
     return ['result' => 'data'];
 };
@@ -143,10 +150,13 @@ return Response::redirect('/somewhere');
 
 ### Database Access
 
-SQLite is available via the `$db` PDO instance:
+Create a PDO connection inside your handler when you need DB access:
 
 ```php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // Create a table
     $db->exec('CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
@@ -171,13 +181,19 @@ return function ($request, $db) {
 
 ```php
 // GET /api/users - List users
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $stmt = $db->query('SELECT * FROM users');
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 };
 
 // POST /api/users - Create user
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $name = $request->input('name');
     $email = $request->input('email');
     
@@ -196,7 +212,10 @@ return function ($request, $db) {
 
 ```php
 // POST /webhooks/github
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $payload = $request->json();
     
     // Log the webhook
@@ -216,7 +235,7 @@ return function ($request, $db) {
 
 ```php
 // GET /api/weather
-return function ($request, $db) {
+return function ($request) {
     $city = $request->query('city', 'London');
     
     // Call external API

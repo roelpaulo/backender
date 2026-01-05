@@ -63,10 +63,13 @@ return function ($request) {
 
 ## Database Access
 
-SQLite database is available via `$db` PDO instance:
+Create a PDO connection inside your handler when you need DB access:
 
 ```php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $stmt = $db->prepare('SELECT * FROM users WHERE id = ?');
     $stmt->execute([$request->query('id')]);
     

@@ -23,7 +23,10 @@ First, create a users table via a setup endpoint:
 **POST /setup/users**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $db->exec('CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -40,7 +43,10 @@ return function ($request, $db) {
 **GET /api/users**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $page = $request->query('page', 1);
     $limit = $request->query('limit', 10);
     $offset = ($page - 1) * $limit;
@@ -75,7 +81,10 @@ curl "http://localhost:8080/api/users?page=1&limit=20"
 **POST /setup/posts**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $db->exec('CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
@@ -95,7 +104,10 @@ return function ($request, $db) {
 **POST /api/posts**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $title = $request->input('title');
     $content = $request->input('content');
     $author = $request->input('author', 'Anonymous');
@@ -121,7 +133,10 @@ return function ($request, $db) {
 **GET /api/posts**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $stmt = $db->query('SELECT * FROM posts WHERE published = 1 ORDER BY created_at DESC');
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 };
@@ -132,7 +147,10 @@ return function ($request, $db) {
 **GET /api/posts/single**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     
     if (!$id) {
@@ -156,7 +174,10 @@ return function ($request, $db) {
 **PATCH /api/posts/publish**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $id = $request->query('id');
     $published = $request->input('published', 1);
     
@@ -166,7 +187,7 @@ return function ($request, $db) {
     return ['message' => 'Post status updated'];
 };
 ```
-
+{
 ---
 
 ## Webhooks
@@ -176,7 +197,10 @@ return function ($request, $db) {
 **POST /webhooks/github**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // Get the webhook payload
     $payload = $request->json();
     $event = $request->header('X-GitHub-Event');
@@ -211,13 +235,16 @@ return function ($request, $db) {
     return ['status' => 'received', 'event' => $event];
 };
 ```
-
+{
 ### Generic Webhook Logger
 
 **POST /webhooks/log**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $source = $request->input('source', 'unknown');
     $data = $request->json();
     
@@ -234,7 +261,7 @@ return function ($request, $db) {
     return ['id' => $db->lastInsertId()];
 };
 ```
-
+{
 ---
 
 ## Authentication
@@ -244,7 +271,10 @@ return function ($request, $db) {
 **GET /api/protected**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $apiKey = $request->header('X-API-Key');
     
     if (!$apiKey) {
@@ -264,7 +294,7 @@ return function ($request, $db) {
     return ['message' => 'Access granted', 'data' => 'secret stuff'];
 };
 ```
-
+{
 **Usage:**
 ```bash
 curl http://localhost:8080/api/protected \
@@ -280,7 +310,10 @@ Track file upload metadata (store actual files elsewhere, track in DB):
 **POST /api/uploads**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $db->exec('CREATE TABLE IF NOT EXISTS uploads (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         filename TEXT,
@@ -306,7 +339,7 @@ return function ($request, $db) {
     ], 201);
 };
 ```
-
+{
 ---
 
 ## Search & Filtering
@@ -316,7 +349,10 @@ return function ($request, $db) {
 **GET /api/search**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $query = $request->query('q', '');
     $category = $request->query('category');
     
@@ -341,7 +377,7 @@ return function ($request, $db) {
     ];
 };
 ```
-
+{
 **Usage:**
 ```bash
 curl "http://localhost:8080/api/search?q=hello&category=tech"
@@ -356,7 +392,10 @@ curl "http://localhost:8080/api/search?q=hello&category=tech"
 **POST /api/track**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $db->exec('CREATE TABLE IF NOT EXISTS page_views (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         page TEXT,
@@ -383,13 +422,16 @@ return function ($request, $db) {
     ];
 };
 ```
-
+{
 ### Get Analytics
 
 **GET /api/analytics**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database/backender.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $page = $request->query('page');
     
     if ($page) {
@@ -415,7 +457,7 @@ return function ($request, $db) {
     ];
 };
 ```
-
+{
 ---
 
 ## External API Integration
@@ -425,7 +467,7 @@ return function ($request, $db) {
 **GET /api/weather**
 ```php
 <?php
-return function ($request, $db) {
+return function ($request) {
     $city = $request->query('city', 'London');
     
     // Call external API
@@ -443,7 +485,7 @@ return function ($request, $db) {
     ];
 };
 ```
-
+]},
 ---
 
 ## Tips for Building APIs
